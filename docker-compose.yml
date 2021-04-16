@@ -1,0 +1,45 @@
+
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: poke-api
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: poke-api
+    container_name: poke-api-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+
+  db:
+    image: mysql:5.7
+    container_name: poke-api-db
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pokemon-mysql:/var/lib/poke-mysql/data/
+    ports:
+       - 13306:3306
+
+  nginx:
+    image: nginx:alpine
+    container_name: poke-api-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d
+
+
+volumes:
+  pokemon-mysql:
+    driver: "local"
