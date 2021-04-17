@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'App\\Http\\Controllers\\Controller@getPokemonsData')->name('home');
+
+Route::get('/pokemon-details/{name}', 'App\\Http\\Controllers\\Controller@pokemonDetails')->name('pokemon.details');
+
